@@ -2,16 +2,19 @@ import gspread
 from google.oauth2.service_account import Credentials
 from pprint import pprint
 
+
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/drive"
     ]
 
+
 CREDS = Credentials.from_service_account_file('creds.json')
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('love_sandwiches')
+
 
 def get_sales_data():
     """
@@ -35,6 +38,7 @@ def get_sales_data():
 
     return sales_data
 
+
 def validate_data(values):
     """
     Inside the try, converts all string values into integers.
@@ -54,6 +58,7 @@ def validate_data(values):
 
     return True
 
+
 def update_sales_worksheet(data):
     """
     Update sales worksheet, add new row with the list data provided
@@ -62,7 +67,17 @@ def update_sales_worksheet(data):
     sales_worksheet = SHEET.worksheet("sales")
     sales_worksheet.append_row(data)
     print("Sales worksheet updated successfully.\n")
-    
+
+
+def update_surplus_worksheet(new_surplus_data):
+    """
+    Update surplus worksheet, add new row with the new surplus list data provided
+    """
+    print("Updating surplus worksheet...\n")
+    surplus_worksheet = SHEET.worksheet("surplus")
+    surplus_worksheet.append_row(new_surplus_data)
+    print("Surplus worksheet updated successfully.\n")
+
 
 def calculate_surplus_data(sales_row):
     """
@@ -83,6 +98,7 @@ def calculate_surplus_data(sales_row):
         
     return surplus_data
 
+
 def main():
     """
     Run all program functions
@@ -91,7 +107,7 @@ def main():
     sales_data = [int(num) for num in data]
     update_sales_worksheet(sales_data)
     new_surplus_data = calculate_surplus_data(sales_data)
-    print(new_surplus_data)
+    update_surplus_worksheet(new_surplus_data)
 
 
 print("Welcome to Love Sandwiches Data Automation")
